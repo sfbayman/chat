@@ -20,7 +20,8 @@
       http://localhost:8080/swagger-ui.html
     Written test cases for rest layer and persistency layer 
     Since apis specs are expecting different type of response, i have created multiple models and resources 
-  
+    Tested the service for 1 minute with 100 users and throughput is around 800 per second
+    
 • The limitations of your implementation
   
     It has in-memory database - H2
