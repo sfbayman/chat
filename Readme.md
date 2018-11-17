@@ -1,8 +1,9 @@
 • Instructions on how to compile your service
-
+    
+    Need java 8 and latest maven installed 
     clone the git repo
     get into the project directory -> cd chat
-    compile using the following command and assuming that maven is installed.
+    compile using the following command 
     mvn clean install
     
 • Instructions on how to run your service locally
@@ -39,7 +40,7 @@
 • How you would scale it in the future
     
     scaling application perspectinve, 
-      a) need to use non blocking io and that makes application more scalable
+      a) need to use non blocking io /reactive programming and that makes application more scalable
       b) not using any state makes ie easier to scale horizontally       
     scaling database perspectinve, data access layer need changes 
     
