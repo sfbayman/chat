@@ -46,8 +46,11 @@ public class ChatController {
   @GetMapping(path = "/chat/{id}")
   @ResponseBody
   public ResponseEntity<TextMessageResource> get(@PathVariable Long id) {
-    Message message = chatService.get(id);
-    if (message == null) {
+    Message message = null;
+    try {
+      message = chatService.get(id);
+    } catch (Exception ex) {
+      //TODO: need to handle custom exception here
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
     return ResponseEntity.status(HttpStatus.OK).body(toResource(message));
@@ -60,8 +63,11 @@ public class ChatController {
   public ResponseEntity<TextMessageResponse> create(@RequestBody TextMessage inputMessage) {
     TextMessageResource resource = new TextMessageResource();
     BeanUtils.copyProperties(inputMessage, resource);
-    Message message = chatService.create(resource);
-    if (message == null) {
+    Message message = null;
+    try {
+      message = chatService.create(resource);
+    } catch (Exception ex) {
+      //TODO: need to handle custom exception here
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
     return ResponseEntity.status(HttpStatus.CREATED).body(

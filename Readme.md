@@ -34,16 +34,14 @@
     Good documentation of classes/interfaces
     Better exception handling with error codes and custom exceptions
     I would have written more unit test cases and integration test cases using karate framework 
-   
+    
  
 • How you would scale it in the future
     
-    In my understanding, scale can mean different things in different contexts 
-    This is a scalable solution since i have done the code to interface.
-      In the future, if we add new type of message, we can have new models and the can implement the base type.
-      For the existing models, all data members are in sync, since all are implementing base type interface.
-      
-    For scaling database perspectinve , data access layer need changes 
+    scaling application perspectinve, 
+      a) need to use non blocking io and that makes application more scalable
+      b) not using any state makes ie easier to scale horizontally       
+    scaling database perspectinve, data access layer need changes 
     
       
      

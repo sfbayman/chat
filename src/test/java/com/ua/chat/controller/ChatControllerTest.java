@@ -12,11 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
+import javax.persistence.PersistenceException;
 
 import com.ua.chat.TestApp;
 import com.ua.chat.model.TextMessage;
 import com.ua.chat.service.ChatService;
 import org.hamcrest.Matchers;
+import org.hibernate.ObjectNotFoundException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -62,8 +64,7 @@ public class ChatControllerTest {
     mockMvc.perform(get("/chat/1").contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.username", Matchers.is(message.getUserName())))
-        .andExpect(jsonPath("$.expiration_date", Matchers.is(message.getExpirationDate().toString())))
-        .andExpect(jsonPath("$.text", Matchers.is(message.getMessage())));
+        .andExpect(jsonPath("$.text", Matchers.is(message.getMessage()))).andReturn();
   }
 
   @Test
@@ -106,7 +107,7 @@ public class ChatControllerTest {
         .message("this test msg")
         .timeout(30).build();
     Mockito.when(chatService.create(any()))
-        .thenReturn(null);
+        .thenThrow(PersistenceException.class);
     String requestBody = "{ \"username\": \"paulrad\", \"text\": \"This is a messagwe2ww3\", \"timeout\": 30 }";
     mockMvc.perform(
         post("/chat").content(requestBody)
@@ -166,7 +167,7 @@ public class ChatControllerTest {
   @Test
   public void get_not_found_fail() throws Exception {
     Mockito.when(chatService.get(any()))
-        .thenReturn(null);
+        .thenThrow(ObjectNotFoundException.class);
     mockMvc.perform(get("/chat/1").contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isNotFound());
   }

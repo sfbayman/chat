@@ -5,6 +5,7 @@ package com.ua.chat.persistence.impl;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +21,7 @@ import com.ua.chat.persistence.model.TextMessageEntity;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,16 +78,18 @@ public class MessagePersistenceServiceImpl implements MessagePersistenceService 
 
   }
 
-  @Transactional
   @Override
   public Collection<Message> list(String userName) {
     List<TextMessageEntity> messages = null;
     List<TextMessageEntity> result = null;
     try {
-      messages = textMessageRepository.findByUserName(userName);
-      if (!messages.isEmpty()) {
-        result = messages;
-        updateExpiryDate(result);
+      synchronized (this) {
+        messages = textMessageRepository.findByUserName(userName);
+        if (!messages.isEmpty()) {
+          result = messages;
+          updateExpiryDate(messages);
+          archiveMessages(result);
+        }
       }
     } catch (PersistenceException | DataAccessException ex) {
       //need to create exception un-wrapper and throw custom exception
@@ -94,13 +98,24 @@ public class MessagePersistenceServiceImpl implements MessagePersistenceService 
     return Collections.unmodifiableCollection(messages);
   }
 
-  private void updateExpiryDate(List<TextMessageEntity> messages) {
+  @Async
+  void updateExpiryDate(List<TextMessageEntity> messages) {
+    for (TextMessageEntity message : messages) {
+      message.setExpirationDate(OffsetDateTime.now(ZoneOffset.UTC));
+    }
+  }
+
+  @Transactional
+  @Async
+  void archiveMessages(List<TextMessageEntity> messages) {
+    textMessageRepository.deleteAll(messages);
+    List<TextMessageArchiveEntity> archiveEntityList = new ArrayList<>();
     for (Message message : messages) {
       TextMessageArchiveEntity textMessageArchiveEntity = new TextMessageArchiveEntity();
       BeanUtils.copyProperties(message, textMessageArchiveEntity);
       textMessageArchiveEntity.setExpirationDate(OffsetDateTime.now(ZoneOffset.UTC));
-      textMessageArchiveRepository.saveAndFlush(textMessageArchiveEntity);
-      textMessageRepository.deleteById(message.getId());
+      archiveEntityList.add(textMessageArchiveEntity);
     }
+    textMessageArchiveRepository.saveAll(archiveEntityList);
   }
 }
