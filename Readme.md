@@ -77,11 +77,11 @@ api examples:
    - GET /chats/:username
     
         
-        GET /chats/paulrad HTTP/1.1
-        Host: localhost:8080
-        Content-Type: application/json
-        cache-control: no-cache
-        Postman-Token: edee118a-06b4-4b77-88e5-b196d2f97685
-        {    	
-        "username": "paulrad", "text": "This is a messagwe2ww23", "timeout": 30
-        }
+    GET /chats/paulrad HTTP/1.1
+    Host: localhost:8080
+    Content-Type: application/json
+    cache-control: no-cache
+    Postman-Token: edee118a-06b4-4b77-88e5-b196d2f97685
+    {    	
+    "username": "paulrad", "text": "This is a messagwe2ww23", "timeout": 30
+    }
