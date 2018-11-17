@@ -37,10 +37,14 @@
    
  
 • How you would scale it in the future
-
+    
+    In my understanding, scale can mean different things in different contexts 
     This is a scalable solution since i have done the code to interface.
       In the future, if we add new type of message, we can have new models and the can implement the base type.
       For the existing models, all data members are in sync, since all are implementing base type interface.
+      
+    For scaling database perspectinve , data access layer need changes 
+    
       
      
 api examples:
