@@ -167,7 +167,7 @@ public class ChatControllerTest {
   @Test
   public void get_not_found_fail() throws Exception {
     Mockito.when(chatService.get(any()))
-        .thenThrow(ObjectNotFoundException.class);
+        .thenReturn(null);
     mockMvc.perform(get("/chat/1").contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isNotFound());
   }

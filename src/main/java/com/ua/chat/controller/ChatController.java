@@ -46,11 +46,8 @@ public class ChatController {
   @GetMapping(path = "/chat/{id}")
   @ResponseBody
   public ResponseEntity<TextMessageResource> get(@PathVariable Long id) {
-    Message message = null;
-    try {
-      message = chatService.get(id);
-    } catch (Exception ex) {
-      //TODO: need to handle custom exception here
+    Message message = chatService.get(id);
+    if (message == null) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
     return ResponseEntity.status(HttpStatus.OK).body(toResource(message));
